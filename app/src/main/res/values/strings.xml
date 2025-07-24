@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Files</string>
+    <string name="search">Search</string>
+    <string name="internal">Internal</string>
+    <string name="files">Files</string>
+    <string name="recents">Recents</string>
+    <string name="storage">Storage</string>
+    <string name="create_new">Create new</string>
+    <string name="title">Title</string>
+    <string name="folder">Folder</string>
+    <string name="file">File</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="manage_storage">Manage storage</string>
+    <string name="more_info">More info</string>
+    <string name="free">Free</string>
+    <string name="of">of</string>
+    <string name="gb">GB</string>
+    <string name="mb">MB</string>
+    <string name="kb">kB</string>
+    <string name="items">items</string>
+    <string name="item">item</string>
+    <string name="apps">Apps</string>
+    <string name="videos">Videos</string>
+    <string name="system">System</string>
+    <string name="audio">Audio</string>
+    <string name="archives">Archives</string>
+    <string name="sd_card">SD Card</string>
+</resources>
+
