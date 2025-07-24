@@ -30,7 +30,7 @@ jobs:
     - name: Setup Gradle Wrapper
       # This step ensures that the gradle-wrapper.jar is present and correctly configured.
       # It will download the wrapper if it's not already present.
-      run: ./gradlew wrapper --gradle-version 8.14.3
+      run: ./gradlew wrapper
 
     - name: Decode Keystore
       # This step decodes the base64 encoded keystore secret and saves it as a file.
