@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var fab: FloatingActionButton
     private lateinit var searchEditText: EditText
+    private lateinit var toolbar: Toolbar
     
     private var filesFragment: FilesFragment? = null
     private var storageFragment: StorageFragment? = null
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         
         initViews()
+        setSupportActionBar(toolbar)
         setupListeners()
         checkPermissions()
         
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
         fab = findViewById(R.id.fab)
         searchEditText = findViewById(R.id.searchEditText)
+        toolbar = findViewById(R.id.toolbar)
     }
 
     private fun setupListeners() {
@@ -218,4 +222,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
