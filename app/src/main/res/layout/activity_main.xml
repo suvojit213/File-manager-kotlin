@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/app_name"
-            app:titleTextColor="@color/primary_text" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -28,33 +28,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <!-- Search Bar -->
-        <LinearLayout
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/searchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:background="@drawable/search_background"
-            android:orientation="horizontal"
-            android:padding="12dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/ic_search"
-                android:contentDescription="@string/search" />
-
-            <EditText
-                android:id="@+id/searchEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="@string/search"
-                android:textColorHint="@color/secondary_text"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+            android:hint="@string/search" />
 
         <!-- Main Content -->
         <FrameLayout
@@ -64,6 +43,14 @@
             android:layout_weight="1" />
 
     </LinearLayout>
+
+    <com.google.android.material.search.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/search"
+        app:layout_behavior="@string/search_view_behavior"
+        app:menu="@menu/search_menu" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"

@@ -26,8 +26,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var fab: FloatingActionButton
-    private lateinit var searchEditText: EditText
     private lateinit var toolbar: Toolbar
+    private lateinit var searchBar: com.google.android.material.search.SearchBar
+    private lateinit var searchView: com.google.android.material.search.SearchView
     
     private var filesFragment: FilesFragment? = null
     private var storageFragment: StorageFragment? = null
@@ -68,8 +69,9 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
         fab = findViewById(R.id.fab)
-        searchEditText = findViewById(R.id.searchEditText)
         toolbar = findViewById(R.id.toolbar)
+        searchBar = findViewById(R.id.searchBar)
+        searchView = findViewById(R.id.searchView)
     }
 
     private fun setupListeners() {
@@ -94,6 +96,25 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             showCreateNewDialog()
         }
+
+        searchBar.setOnClickListener {
+            searchView.show()
+        }
+
+        searchView.setupWithSearchBar(searchBar)
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Handle search query submission
+                Toast.makeText(this@MainActivity, "Search submitted: $query", Toast.LENGTH_SHORT).show()
+                searchView.hide()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Handle text changes in search view
+                return false
+            }
+        })
     }
 
     private fun loadFragment(fragment: Fragment) {

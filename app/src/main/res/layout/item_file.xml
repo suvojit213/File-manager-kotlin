@@ -27,9 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Folder Name"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            android:textStyle="normal" />
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/fileDetails"
@@ -37,8 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="23.06.2025, 02:52 am - 0 items"
-            android:textColor="@color/secondary_text"
-            android:textSize="14sp" />
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>
 
