@@ -49,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:hint="@string/search"
-        app:layout_behavior="@string/search_view_behavior"
+        
         app:menu="@menu/search_menu" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
