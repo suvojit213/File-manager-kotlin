@@ -8,12 +8,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
         
         initViews()
@@ -44,6 +48,19 @@ class MainActivity : AppCompatActivity() {
         setupListeners()
         checkPermissions()
         
+        // Apply window insets to relevant views
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, insets ->
+            val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            insets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNavigation) { view, insets ->
+            val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            view.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            insets
+        }
+
         // Load default fragment
         loadFragment(getFilesFragment())
     }
