@@ -12,22 +12,23 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v3
-    - name: List Gradle Wrapper files after checkout
-      run: ls -l gradle/wrapper/
     - name: set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: List root directory files
-      run: ls -l
+    - name: Download Gradle Distribution
+      run: curl -L https://services.gradle.org/distributions/gradle-8.14.3-bin.zip -o gradle-8.14.3-bin.zip
+
+    - name: Unzip Gradle Distribution
+      run: unzip gradle-8.14.3-bin.zip
+
+    - name: Copy gradle-wrapper.jar
+      run: cp gradle-8.14.3/lib/gradle-wrapper.jar gradle/wrapper/
 
     - name: Make gradlew executable
       run: chmod +x gradlew
-
-    - name: List Gradle Wrapper files after chmod
-      run: ls -l gradle/wrapper/
 
     - name: Decode Keystore
       run: echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > app/my-release-key.jks
