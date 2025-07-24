@@ -49,11 +49,7 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         
         // Apply window insets to relevant views
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, insets ->
-            val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
-            insets
-        }
+        
 
         ViewCompat.setOnApplyWindowInsetsListener(bottomNavigation) { view, insets ->
             val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
