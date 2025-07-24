@@ -61,6 +61,10 @@
         <item name="textAppearanceLabelSmall">@style/TextAppearance.FileManagerApp.LabelSmall</item>
     </style>
 
+    <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView.PrimarySurface">
+        <item name="itemTextColor">@color/md_theme_light_onSurface</item>
+    </style>
+
     <!-- Typography Styles -->
     <style name="TextAppearance.FileManagerApp.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge" />
     <style name="TextAppearance.FileManagerApp.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium" />

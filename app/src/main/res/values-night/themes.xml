@@ -62,4 +62,7 @@
     </style>
 
     <!-- Typography Styles (defined in values/themes.xml, but referenced here for consistency) -->
+    <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView.PrimarySurface">
+        <item name="itemTextColor">@color/md_theme_dark_onSurface</item>
+    </style>
 </resources>

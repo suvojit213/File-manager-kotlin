@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/bottom_nav_background"
+        style="@style/Widget.FileManagerApp.BottomNavigationView"
         app:menu="@menu/bottom_navigation_menu" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
