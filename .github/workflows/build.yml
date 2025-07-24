@@ -48,7 +48,7 @@ jobs:
       # Ensure KEYSTORE_PASSWORD, KEY_ALIAS, and KEY_PASSWORD are set in your GitHub Secrets.
       run: ./gradlew assembleRelease
       env:
-        KEYSTORE_PATH: app/my-release-key.jks
+        KEYSTORE_PATH: my-release-key.jks
         KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
         KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
