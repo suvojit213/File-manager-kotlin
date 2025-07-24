@@ -73,6 +73,7 @@
     <style name="TextAppearance.FileManagerApp.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium" />
     <style name="TextAppearance.FileManagerApp.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall" />
     <style name="TextAppearance.FileManagerApp.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">18sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
         <item name="android:scrollHorizontally">true</item>
