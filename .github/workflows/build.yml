@@ -17,17 +17,16 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      
+    - name: Setup Gradle
+      uses: gradle/setup-gradle@v3
+
     - name: Build with Gradle
-      run: ./gradlew build
+      run: gradle build
 
     - name: Extract version name
       id: version
-      run: echo "VERSION_NAME=$(grep versionName app/build.gradle | sed -n 's/.*versionName "\(.*\)"/\1/p')" >> $GITHUB_ENV
+      run: echo "VERSION_NAME=$(grep versionName app/build.gradle | sed -n 's/.*versionName \"\(.*\)\"/\1/p')" >> $GITHUB_ENV
 
     - name: Create Release
       uses: actions/create-release@v1
