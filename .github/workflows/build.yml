@@ -24,13 +24,15 @@ jobs:
       with:
         gradle-version: 8.14.3
 
-    - name: Make gradlew executable
-      run: chmod +x gradlew
-
     - name: Setup Gradle Wrapper
       # This step ensures that the gradle-wrapper.jar is present and correctly configured.
       # It will download the wrapper if it's not already present.
-      run: ./gradlew wrapper
+      run: |
+        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "gradle-wrapper.jar not found. Generating it using the provisioned Gradle."
+          $GRADLE_HOME/bin/gradle wrapper
+        fi
+        chmod +x gradlew
 
     - name: Decode Keystore
       # This step decodes the base64 encoded keystore secret and saves it as a file.
