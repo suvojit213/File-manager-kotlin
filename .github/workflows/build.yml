@@ -27,6 +27,11 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
+    - name: Setup Gradle Wrapper
+      # This step ensures that the gradle-wrapper.jar is present and correctly configured.
+      # It will download the wrapper if it's not already present.
+      run: ./gradlew wrapper --gradle-version 8.14.3
+
     - name: Decode Keystore
       # This step decodes the base64 encoded keystore secret and saves it as a file.
       # Ensure SIGNING_KEYSTORE_BASE64 is set in your GitHub Secrets.
