@@ -16,6 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:minHeight="?attr/actionBarSize"
             app:title="@string/app_name"
             android:textAppearance="?attr/textAppearanceTitleLarge" />
 
