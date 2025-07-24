@@ -1,12 +1,13 @@
 package com.filemanager.app
 
+import java.io.File
+
 data class FileItem(
+    val file: File,
     val name: String,
-    val path: String,
+    val details: String,
     val isDirectory: Boolean,
-    val lastModified: Long,
-    val size: Long = 0L,
-    val itemCount: Int = 0,
-    val extension: String = ""
+    val icon: Int,
+    var isSelected: Boolean = false
 )
 

@@ -18,7 +18,7 @@ object FileOperations {
 
         withContext(Dispatchers.IO) {
             selectedFiles.forEach { fileItem ->
-                val sourceFile = File(fileItem.path)
+                val sourceFile = fileItem.file
                 val destinationFile = File(destinationDir, sourceFile.name)
                 try {
                     sourceFile.copyTo(destinationFile, overwrite = true)
@@ -40,7 +40,7 @@ object FileOperations {
 
         withContext(Dispatchers.IO) {
             selectedFiles.forEach { fileItem ->
-                val sourceFile = File(fileItem.path)
+                val sourceFile = fileItem.file
                 val destinationFile = File(destinationDir, sourceFile.name)
                 try {
                     sourceFile.copyTo(destinationFile, overwrite = true)
@@ -63,7 +63,7 @@ object FileOperations {
 
         withContext(Dispatchers.IO) {
             selectedFiles.forEach { fileItem ->
-                val fileToDelete = File(fileItem.path)
+                val fileToDelete = fileItem.file
                 try {
                     if (fileToDelete.isDirectory) {
                         fileToDelete.deleteRecursively()

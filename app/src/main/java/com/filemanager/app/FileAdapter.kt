@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.filemanager.app.databinding.ListItemIosBinding
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.content.ContextCompat
 
 class FileAdapter(
     private val onClick: (FileItem) -> Unit,
@@ -28,7 +29,25 @@ class FileAdapter(
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
         val fileItem = getItem(position)
         holder.bind(fileItem)
-        holder.itemView.isActivated = selectedItems.get(position)
+        // --- SELECTION LOGIC START ---
+        if (fileItem.isSelected) {
+            // Selected state
+            holder.itemView.setBackgroundColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.selected_item_background
+                )
+            )
+        } else {
+            // Default state
+            holder.itemView.setBackgroundColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    android.R.color.transparent
+                )
+            )
+        }
+        // --- SELECTION LOGIC END ---
     }
 
     fun toggleSelection(position: Int) {
@@ -94,10 +113,10 @@ class FileAdapter(
             if (fileItem.isDirectory) {
                 details.append("Folder")
             } else {
-                details.append(formatSize(fileItem.size))
+                details.append(formatSize(fileItem.file.length()))
             }
             details.append(" • ")
-            details.append(formatDate(fileItem.lastModified))
+            details.append(formatDate(fileItem.file.lastModified()))
             binding.tvFileDetailsIos.text = details.toString()
 
             val iconResId = when {
@@ -131,7 +150,7 @@ class FileAdapter(
 
     private class FileDiffCallback : DiffUtil.ItemCallback<FileItem>() {
         override fun areItemsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
-            return oldItem.path == newItem.path
+            return oldItem.file.absolutePath == newItem.file.absolutePath
         }
 
         override fun areContentsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {

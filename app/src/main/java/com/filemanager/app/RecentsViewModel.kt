@@ -30,7 +30,7 @@ class RecentsViewModel : ViewModel() {
             }
 
             // Sort by last modified (most recent first) and take the top N
-            val sortedFiles = recentFiles.sortedByDescending { it.lastModified }.take(MAX_RECENT_FILES)
+            val sortedFiles = recentFiles.sortedByDescending { it.file.lastModified() }.take(MAX_RECENT_FILES)
 
             _recentFiles.postValue(sortedFiles)
         }
@@ -41,12 +41,16 @@ class RecentsViewModel : ViewModel() {
             if (file.isFile) {
                 recentFiles.add(
                     FileItem(
+                        file = file,
                         name = file.name,
-                        path = file.absolutePath,
+                        details = formatSize(file.length()),
                         isDirectory = false,
-                        lastModified = file.lastModified(),
-                        size = file.length(),
-                        extension = file.extension
+                        icon = when {
+                            file.name.endsWith(".pdf", true) -> R.drawable.ic_pdf_file
+                            file.name.endsWith(".mp4", true) || file.name.endsWith(".avi", true) -> R.drawable.ic_video_file
+                            file.name.endsWith(".apk", true) -> R.drawable.ic_apk_file
+                            else -> R.drawable.ic_file
+                        }
                     )
                 )
             } else if (file.isDirectory && file.canRead() && !isExcludedDirectory(file)) {
@@ -58,5 +62,12 @@ class RecentsViewModel : ViewModel() {
     private fun isExcludedDirectory(directory: File): Boolean {
         val excludedNames = listOf("android", "obb", "data", ".thumbnails", ".nomedia")
         return excludedNames.any { directory.name.lowercase() == it }
+    }
+
+    private fun formatSize(size: Long): String {
+        if (size <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
+        return String.format("%.2f %s", size / Math.pow(1024.0, digitGroups.toDouble()), units[digitGroups])
     }
 }

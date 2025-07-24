@@ -28,14 +28,27 @@ class FilesViewModel : ViewModel() {
                         file.listFiles()?.size ?: 0
                     } else 0
 
+                    val details = if (file.isDirectory) {
+                        "Folder"
+                    } else {
+                        formatSize(file.length())
+                    }
+
+                    val iconResId = when {
+                        file.isDirectory -> R.drawable.ic_folder_ios
+                        file.name.endsWith(".pdf", true) -> R.drawable.ic_pdf_file
+                        file.name.endsWith(".mp4", true) || file.name.endsWith(".avi", true) -> R.drawable.ic_video_file
+                        file.name.endsWith(".apk", true) -> R.drawable.ic_apk_file
+                        else -> R.drawable.ic_file
+                    }
+
                     fileList.add(
                         FileItem(
+                            file = file,
                             name = file.name,
-                            path = file.absolutePath,
+                            details = details,
                             isDirectory = file.isDirectory,
-                            lastModified = file.lastModified(),
-                            size = if (file.isFile) file.length() else 0L,
-                            itemCount = itemCount
+                            icon = iconResId
                         )
                     )
                 }
@@ -48,5 +61,12 @@ class FilesViewModel : ViewModel() {
 
             _files.postValue(sortedFiles)
         }
+    }
+
+    private fun formatSize(size: Long): String {
+        if (size <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
+        return String.format("%.2f %s", size / Math.pow(1024.0, digitGroups.toDouble()), units[digitGroups])
     }
 }

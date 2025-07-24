@@ -50,17 +50,8 @@ class FilesFragment : Fragment() {
         recyclerView.layoutManager = layoutManagerList
         
         fileAdapter = FileAdapter(
-            onClick = { fileItem ->
-                if (fileItem.isDirectory) {
-                    navigateToFolder(fileItem.path)
-                }
-            },
-            onLongClick = { fileItem ->
-                if (actionMode == null) {
-                    actionMode = activity?.startActionMode(actionModeCallback)
-                }
-                true // Indicate that the long click was consumed
-            },
+            onClick = { fileItem -> onFileClicked(fileItem) },
+            onLongClick = { fileItem -> onFileLongClicked(fileItem); true },
             onSelectionChange = { count ->
                 if (count == 0) {
                     actionMode?.finish()
@@ -131,6 +122,45 @@ class FilesFragment : Fragment() {
 
     fun getCurrentPath(): String = filesViewModel.currentPath.value ?: Environment.getExternalStorageDirectory().absolutePath
 
+    private fun onFileClicked(fileItem: FileItem) {
+        if (actionMode != null) {
+            // Agar selection mode on hai, toh click par select/deselect karein
+            toggleSelection(fileItem)
+        } else {
+            // Normal click logic
+            if (fileItem.isDirectory) {
+                navigateToFolder(fileItem.file.absolutePath)
+            } else {
+                // ... file open karne ka code ...
+            }
+        }
+    }
+
+    private fun onFileLongClicked(fileItem: FileItem) {
+        if (actionMode == null) {
+            // Action mode start karein
+            actionMode = activity?.startActionMode(actionModeCallback)
+        }
+        toggleSelection(fileItem)
+    }
+
+    private fun toggleSelection(fileItem: FileItem) {
+        fileItem.isSelected = !fileItem.isSelected // State toggle karein
+        val index = fileAdapter.currentList.indexOf(fileItem)
+        if (index != -1) {
+            fileAdapter.notifyItemChanged(index) // Sirf uss item ko refresh karein
+        }
+
+        val selectedCount = fileAdapter.currentList.count { it.isSelected }
+        if (selectedCount == 0) {
+            actionMode?.finish()
+        } else {
+            actionMode?.title = "$selectedCount selected"
+            actionMode?.invalidate()
+        }
+    }
+
+    // ActionModeCallback ke andar onDestroyActionMode mein selection clear karein
     private val actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode?.menuInflater?.inflate(R.menu.file_context_menu, menu)
@@ -142,7 +172,7 @@ class FilesFragment : Fragment() {
         }
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            val selectedFiles = fileAdapter.getSelectedItems()
+            val selectedFiles = fileAdapter.currentList.filter { it.isSelected }
             val currentPath = getCurrentPath()
             when (item?.itemId) {
                 R.id.action_copy -> {
@@ -180,7 +210,9 @@ class FilesFragment : Fragment() {
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            fileAdapter.clearSelection()
+            // Sabhi selections ko false karein
+            fileAdapter.currentList.forEach { it.isSelected = false }
+            fileAdapter.notifyDataSetChanged() // Poori list ko refresh karein
             actionMode = null
         }
     }
