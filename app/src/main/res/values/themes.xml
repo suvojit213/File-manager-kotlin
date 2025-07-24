@@ -62,7 +62,7 @@
     </style>
 
     <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemTextColor">@color/md_theme_light_onSurface</item>
+        <item name="itemTextColor">@color/black</item>
     </style>
 
     <!-- Typography Styles -->
