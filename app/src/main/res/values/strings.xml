@@ -27,5 +27,6 @@
     <string name="audio">Audio</string>
     <string name="archives">Archives</string>
     <string name="sd_card">SD Card</string>
+    <string name="search_view_behavior">com.google.android.material.search.SearchView$ScrollingViewBehavior</string>
 </resources>
 

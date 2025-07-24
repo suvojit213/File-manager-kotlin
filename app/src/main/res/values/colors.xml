@@ -69,4 +69,11 @@
     <color name="orange">#FF9800</color>
     <color name="black">#000000</color>
     <color name="dark_gray">#A9A9A9</color>
+    <color name="search_background">#FFFFFF</color>
+    <color name="window_background">#F0F0F0</color>
+    <color name="toolbar_background">#FFFFFF</color>
+    <color name="bottom_nav_background">#FFFFFF</color>
+    <color name="fab_background">#2196F3</color>
+    <color name="icons">#000000</color>
+    <color name="item_file_background">#FFFFFF</color>
 </resources>
