@@ -6,6 +6,7 @@ data class FileItem(
     val isDirectory: Boolean,
     val lastModified: Long,
     val size: Long = 0L,
-    val itemCount: Int = 0
+    val itemCount: Int = 0,
+    val extension: String = ""
 )
 

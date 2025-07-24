@@ -77,4 +77,5 @@
     <color name="icons">#000000</color>
     <color name="item_file_background">#F0F0F0</color>
     <color name="item_folder_background">#F5F5F5</color>
+    <color name="item_selected_background">#B3E5FC</color>
 </resources>

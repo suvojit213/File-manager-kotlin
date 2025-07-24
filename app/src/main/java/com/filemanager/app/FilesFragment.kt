@@ -10,12 +10,31 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import androidx.recyclerview.widget.GridLayoutManager
+import android.view.ActionMode
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class FilesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var fileAdapter: FileAdapter
     internal lateinit var filesViewModel: FilesViewModel
+
+    private var isGridView = false
+    private lateinit var layoutManagerList: LinearLayoutManager
+    private lateinit var layoutManagerGrid: GridLayoutManager
+
+    private var actionMode: ActionMode? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,13 +44,31 @@ class FilesFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_files, container, false)
         
         recyclerView = view.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(context)
         
-        fileAdapter = FileAdapter { fileItem ->
-            if (fileItem.isDirectory) {
-                navigateToFolder(fileItem.path)
+        layoutManagerList = LinearLayoutManager(context)
+        layoutManagerGrid = GridLayoutManager(context, 3)
+        recyclerView.layoutManager = layoutManagerList
+        
+        fileAdapter = FileAdapter(
+            onItemClick = { fileItem ->
+                if (fileItem.isDirectory) {
+                    navigateToFolder(fileItem.path)
+                }
+            },
+            onItemLongClick = { fileItem ->
+                if (actionMode == null) {
+                    actionMode = activity?.startActionMode(actionModeCallback)
+                }
+                fileAdapter.toggleSelection(fileItem)
+            },
+            onSelectionChange = { count ->
+                if (count == 0) {
+                    actionMode?.finish()
+                } else {
+                    actionMode?.title = "$count selected"
+                }
             }
-        }
+        )
         
         recyclerView.adapter = fileAdapter
 
@@ -50,6 +87,33 @@ class FilesFragment : Fragment() {
         return view
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.files_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_toggle_layout -> {
+                toggleLayout()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun toggleLayout() {
+        isGridView = !isGridView
+        if (isGridView) {
+            recyclerView.layoutManager = layoutManagerGrid
+            activity?.invalidateOptionsMenu() // Invalidate options menu to redraw icons
+        } else {
+            recyclerView.layoutManager = layoutManagerList
+            activity?.invalidateOptionsMenu() // Invalidate options menu to redraw icons
+        }
+        fileAdapter.notifyDataSetChanged() // Notify adapter of layout change
+    }
+
     private fun navigateToFolder(path: String) {
         filesViewModel.loadFiles(path)
     }
@@ -66,6 +130,60 @@ class FilesFragment : Fragment() {
     }
 
     fun getCurrentPath(): String = filesViewModel.currentPath.value ?: Environment.getExternalStorageDirectory().absolutePath
+
+    private val actionModeCallback = object : ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            mode?.menuInflater?.inflate(R.menu.file_context_menu, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            return false
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            val selectedFiles = fileAdapter.getSelectedItems()
+            val currentPath = getCurrentPath()
+            when (item?.itemId) {
+                R.id.action_copy -> {
+                    FileOperations.selectedFiles = selectedFiles
+                    FileOperations.operationType = OperationType.COPY
+                    Toast.makeText(context, "Copied ${selectedFiles.size} items", Toast.LENGTH_SHORT).show()
+                    mode?.finish()
+                    return true
+                }
+                R.id.action_cut -> {
+                    FileOperations.selectedFiles = selectedFiles
+                    FileOperations.operationType = OperationType.CUT
+                    Toast.makeText(context, "Cut ${selectedFiles.size} items", Toast.LENGTH_SHORT).show()
+                    mode?.finish()
+                    return true
+                }
+                R.id.action_delete -> {
+                    lifecycleScope.launch {
+                        FileOperations.deleteFiles(requireContext(), onComplete = {
+                            filesViewModel.loadFiles(currentPath)
+                            mode?.finish()
+                        })
+                    }
+                    return true
+                }
+                R.id.action_paste -> {
+                    // This should ideally be handled by a separate paste button, not in action mode
+                    // For now, we'll just show a toast if somehow triggered here
+                    Toast.makeText(context, "Paste action not available here", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+                else -> false
+            }
+            return false
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            fileAdapter.clearSelection()
+            actionMode = null
+        }
+    }
 
     companion object {
         fun newInstance(): FilesFragment {

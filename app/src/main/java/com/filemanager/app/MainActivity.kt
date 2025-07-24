@@ -21,6 +21,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         // Load default fragment
         loadFragment(getFilesFragment())
+        updateFabVisibility()
     }
 
     private fun initViews() {
@@ -87,16 +90,19 @@ class MainActivity : AppCompatActivity() {
         }
         
         fab.setOnClickListener {
-            showCreateNewDialog()
+            if (FileOperations.selectedFiles.isNotEmpty() && FileOperations.operationType != null) {
+                performPasteOperation()
+            } else {
+                showCreateNewDialog()
+            }
         }
-
-        
     }
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
+        updateFabVisibility()
     }
 
     private fun getFilesFragment(): FilesFragment {
@@ -229,6 +235,43 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             super.onBackPressed()
+        }
+    }
+
+    fun updateFabVisibility() {
+        if (FileOperations.selectedFiles.isNotEmpty() && FileOperations.operationType != null) {
+            fab.setImageResource(R.drawable.ic_paste)
+            fab.visibility = View.VISIBLE
+        } else {
+            fab.setImageResource(R.drawable.ic_add)
+            fab.visibility = View.VISIBLE // Always visible for create new
+        }
+    }
+
+    private fun performPasteOperation() {
+        val currentPath = filesFragment?.getCurrentPath() ?: Environment.getExternalStorageDirectory().absolutePath
+        val destinationDir = File(currentPath)
+
+        lifecycleScope.launch {
+            when (FileOperations.operationType) {
+                OperationType.COPY -> {
+                    FileOperations.copyFiles(this@MainActivity, destinationDir) {
+                        filesFragment?.filesViewModel?.loadFiles(currentPath)
+                        FileOperations.clearOperations()
+                        updateFabVisibility()
+                    }
+                }
+                OperationType.CUT -> {
+                    FileOperations.cutFiles(this@MainActivity, destinationDir) {
+                        filesFragment?.filesViewModel?.loadFiles(currentPath)
+                        FileOperations.clearOperations()
+                        updateFabVisibility()
+                    }
+                }
+                else -> {
+                    // Should not happen
+                }
+            }
         }
     }
 }

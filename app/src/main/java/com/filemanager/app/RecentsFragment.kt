@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.Toast
 
 class RecentsFragment : Fragment() {
 
@@ -25,9 +26,18 @@ class RecentsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
         
-        fileAdapter = FileAdapter { fileItem ->
-            // Handle file click
-        }
+        fileAdapter = FileAdapter(
+            onItemClick = { fileItem ->
+                // Handle file click (e.g., open file)
+                Toast.makeText(context, "Clicked: ${fileItem.name}", Toast.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { fileItem ->
+                // No long click action for recents
+            },
+            onSelectionChange = { count ->
+                // No selection change action for recents
+            }
+        )
         
         recyclerView.adapter = fileAdapter
 
