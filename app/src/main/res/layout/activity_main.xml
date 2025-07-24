@@ -27,13 +27,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Search Bar -->
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:hint="@string/search" />
+        
 
         <!-- Main Content -->
         <FrameLayout
@@ -44,13 +38,7 @@
 
     </LinearLayout>
 
-    <com.google.android.material.search.SearchView
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="@string/search"
-        
-        app:menu="@menu/search_menu" />
+    
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"

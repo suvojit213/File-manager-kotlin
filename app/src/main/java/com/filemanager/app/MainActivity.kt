@@ -27,8 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var fab: FloatingActionButton
     private lateinit var toolbar: Toolbar
-    private lateinit var searchBar: com.google.android.material.search.SearchBar
-    private lateinit var searchView: com.google.android.material.search.SearchView
+    
     
     private var filesFragment: FilesFragment? = null
     private var storageFragment: StorageFragment? = null
@@ -70,8 +69,6 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
         fab = findViewById(R.id.fab)
         toolbar = findViewById(R.id.toolbar)
-        searchBar = findViewById(R.id.searchBar)
-        searchView = findViewById(R.id.searchView)
     }
 
     private fun setupListeners() {
@@ -97,16 +94,7 @@ class MainActivity : AppCompatActivity() {
             showCreateNewDialog()
         }
 
-        searchBar.setOnClickListener {
-            searchView.show()
-        }
-
-        searchView.setupWithSearchBar(searchBar)
-        searchView.editText.setOnEditorActionListener { v, actionId, event ->
-            Toast.makeText(this@MainActivity, "Search submitted: " + searchView.text, Toast.LENGTH_SHORT).show()
-            searchView.hide()
-            false
-        }
+        
     }
 
     private fun loadFragment(fragment: Fragment) {
@@ -177,7 +165,8 @@ class MainActivity : AppCompatActivity() {
 
     fun updateCurrentPath(path: String) {
         // Update UI to show current path
-        supportActionBar?.subtitle = path.substringAfterLast("/")
+        supportActionBar?.title = "Files"
+        supportActionBar?.subtitle = path
     }
 
     private fun checkPermissions() {
