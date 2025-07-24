@@ -1,166 +1,141 @@
 package com.filemanager.app
 
+import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.filemanager.app.databinding.ListItemIosBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import android.view.ActionMode
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-
 class FileAdapter(
-    private val onItemClick: (FileItem) -> Unit,
-    private val onItemLongClick: (FileItem) -> Unit,
+    private val onClick: (FileItem) -> Unit,
+    private val onLongClick: (FileItem) -> Unit,
     private val onSelectionChange: (Int) -> Unit
-) : ListAdapter<FileItem, FileAdapter.FileViewHolder>(FileDiffCallback()) {
+) :
+    ListAdapter<FileItem, FileAdapter.FileViewHolder>(FileDiffCallback()) {
 
-    private val selectedItems = mutableSetOf<FileItem>()
-    private var actionMode: ActionMode? = null
-
-    fun startActionMode(view: View, callback: ActionMode.Callback) {
-        if (actionMode == null) {
-            actionMode = view.startActionMode(callback)
-        }
-    }
-
-    fun finishActionMode() {
-        actionMode?.finish()
-        actionMode = null
-    }
-
-    fun toggleSelection(fileItem: FileItem) {
-        if (selectedItems.contains(fileItem)) {
-            selectedItems.remove(fileItem)
-        } else {
-            selectedItems.add(fileItem)
-        }
-        onSelectionChange(selectedItems.size)
-        notifyItemChanged(currentList.indexOf(fileItem))
-    }
-
-    fun clearSelection() {
-        selectedItems.clear()
-        onSelectionChange(0)
-        notifyDataSetChanged()
-    }
-
-    fun getSelectedItems(): Set<FileItem> {
-        return selectedItems
-    }
-
-    class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val fileIcon: ImageView = itemView.findViewById(R.id.fileIcon)
-        val fileName: TextView = itemView.findViewById(R.id.fileName)
-        val fileDetails: TextView = itemView.findViewById(R.id.fileDetails)
-        val arrowIcon: ImageView = itemView.findViewById(R.id.arrowIcon)
-    }
+    private val selectedItems = SparseBooleanArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_file, parent, false)
-        return FileViewHolder(view)
+        val binding = ListItemIosBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FileViewHolder(binding, onClick, onLongClick, selectedItems, onSelectionChange)
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
         val fileItem = getItem(position)
-        
-        holder.fileName.text = fileItem.name
-        
-        // Set icon and background based on file type
-        if (fileItem.isDirectory) {
-            holder.fileIcon.setImageResource(R.drawable.ic_folder)
-            holder.arrowIcon.visibility = View.VISIBLE
-        } else {
-            holder.arrowIcon.visibility = View.GONE
+        holder.bind(fileItem)
+        holder.itemView.isActivated = selectedItems.get(position)
+    }
 
-            when (fileItem.extension.lowercase()) {
-                "jpg", "jpeg", "png", "webp" -> {
-                    Glide.with(holder.itemView.context)
-                         .load(fileItem.path)
-                         .placeholder(R.drawable.ic_file) // Default icon
-                         .into(holder.fileIcon)
-                }
-                "mp4", "mkv", "avi", "mov" -> {
-                     Glide.with(holder.itemView.context)
-                         .load(fileItem.path)
-                         .placeholder(R.drawable.ic_video_file) // Video icon
-                         .into(holder.fileIcon)
-                }
-                "pdf" -> {
-                    holder.fileIcon.setImageResource(R.drawable.ic_pdf_file) // PDF icon
-                }
-                "apk" -> {
-                     holder.fileIcon.setImageResource(R.drawable.ic_apk_file) // APK icon
-                }
-                else -> {
-                    holder.fileIcon.setImageResource(R.drawable.ic_file) // Generic file icon
-                }
+    fun toggleSelection(position: Int) {
+        if (selectedItems.get(position, false)) {
+            selectedItems.delete(position)
+        } else {
+            selectedItems.put(position, true)
+        }
+        notifyItemChanged(position)
+        onSelectionChange(selectedItems.size())
+    }
+
+    fun getSelectedItems(): List<FileItem> {
+        val items = mutableListOf<FileItem>()
+        for (i in 0 until selectedItems.size()) {
+            if (selectedItems.valueAt(i)) {
+                items.add(getItem(selectedItems.keyAt(i)))
             }
         }
-        
-        // Set background for selected items
-        if (selectedItems.contains(fileItem)) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.item_selected_background))
-        } else {
+        return items
+    }
+
+    fun clearSelection() {
+        val selection = selectedItems.size()
+        selectedItems.clear()
+        notifyDataSetChanged()
+        onSelectionChange(0)
+    }
+
+    class FileViewHolder(
+        private val binding: ListItemIosBinding,
+        private val onClick: (FileItem) -> Unit,
+        private val onLongClick: (FileItem) -> Unit,
+        private val selectedItems: SparseBooleanArray,
+        private val onSelectionChange: (Int) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    if (selectedItems.size() > 0) {
+                        (bindingAdapter as? FileAdapter)?.toggleSelection(position)
+                    } else {
+                        onClick(getItem(position))
+                    }
+                }
+            }
+            itemView.setOnLongClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    (bindingAdapter as? FileAdapter)?.toggleSelection(position)
+                    onLongClick(getItem(position))
+                }
+                true
+            }
+        }
+
+        fun bind(fileItem: FileItem) {
+            binding.tvFileNameIos.text = fileItem.name
+
+            val details = StringBuilder()
             if (fileItem.isDirectory) {
-                holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.item_folder_background))
+                details.append("Folder")
             } else {
-                holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.item_file_background))
+                details.append(formatSize(fileItem.size))
             }
-        }
+            details.append(" • ")
+            details.append(formatDate(fileItem.lastModified))
+            binding.tvFileDetailsIos.text = details.toString()
 
-        // Format date and details
-        val dateFormat = SimpleDateFormat("dd.MM.yyyy, hh:mm a", Locale.getDefault())
-        val formattedDate = dateFormat.format(Date(fileItem.lastModified))
-        
-        val details = if (fileItem.isDirectory) {
-            "$formattedDate - ${fileItem.itemCount} ${if (fileItem.itemCount == 1) "item" else "items"}"
-        } else {
-            "$formattedDate - ${formatFileSize(fileItem.size)}"
-        }
-        
-        holder.fileDetails.text = details
-        
-        holder.itemView.setOnClickListener {
-            if (actionMode != null) {
-                toggleSelection(fileItem)
-            } else {
-                onItemClick(fileItem)
+            val iconResId = when {
+                fileItem.isDirectory -> R.drawable.ic_folder_ios
+                fileItem.name.endsWith(".pdf", true) -> R.drawable.ic_pdf_file
+                fileItem.name.endsWith(".mp4", true) || fileItem.name.endsWith(".avi", true) -> R.drawable.ic_video_file
+                fileItem.name.endsWith(".apk", true) -> R.drawable.ic_apk_file
+                else -> R.drawable.ic_file
             }
+            binding.ivFileIconIos.setImageResource(iconResId)
+            binding.ivArrowIos.visibility = if (fileItem.isDirectory) View.VISIBLE else View.GONE
         }
 
-        holder.itemView.setOnLongClickListener {
-            onItemLongClick(fileItem)
-            true
+        private fun getItem(position: Int): FileItem {
+            return (bindingAdapter as FileAdapter).getItem(position)
+        }
+
+        private fun formatSize(size: Long): String {
+            if (size <= 0) return "0 B"
+            val units = arrayOf("B", "KB", "MB", "GB", "TB")
+            val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
+            return String.format("%.2f %s", size / Math.pow(1024.0, digitGroups.toDouble()), units[digitGroups])
+        }
+
+        private fun formatDate(timestamp: Long): String {
+            val date = Date(timestamp)
+            val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+            return formatter.format(date)
         }
     }
 
-    private fun formatFileSize(size: Long): String {
-        return when {
-            size >= 1024 * 1024 * 1024 -> String.format("%.1f GB", size / (1024.0 * 1024.0 * 1024.0))
-            size >= 1024 * 1024 -> String.format("%.1f MB", size / (1024.0 * 1024.0))
-            size >= 1024 -> String.format("%.1f kB", size / 1024.0)
-            else -> "$size B"
+    private class FileDiffCallback : DiffUtil.ItemCallback<FileItem>() {
+        override fun areItemsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
+            return oldItem.path == newItem.path
         }
-    }
-}
 
-class FileDiffCallback : DiffUtil.ItemCallback<FileItem>() {
-    override fun areItemsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
-        return oldItem.path == newItem.path
-    }
-
-    override fun areContentsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
-        return oldItem == newItem
+        override fun areContentsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
+            return oldItem == newItem
+        }
     }
 }

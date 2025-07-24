@@ -50,16 +50,16 @@ class FilesFragment : Fragment() {
         recyclerView.layoutManager = layoutManagerList
         
         fileAdapter = FileAdapter(
-            onItemClick = { fileItem ->
+            onClick = { fileItem ->
                 if (fileItem.isDirectory) {
                     navigateToFolder(fileItem.path)
                 }
             },
-            onItemLongClick = { fileItem ->
+            onLongClick = { fileItem ->
                 if (actionMode == null) {
                     actionMode = activity?.startActionMode(actionModeCallback)
                 }
-                fileAdapter.toggleSelection(fileItem)
+                true // Indicate that the long click was consumed
             },
             onSelectionChange = { count ->
                 if (count == 0) {
@@ -146,14 +146,14 @@ class FilesFragment : Fragment() {
             val currentPath = getCurrentPath()
             when (item?.itemId) {
                 R.id.action_copy -> {
-                    FileOperations.selectedFiles = selectedFiles
+                    FileOperations.selectedFiles = selectedFiles.toList()
                     FileOperations.operationType = OperationType.COPY
                     Toast.makeText(context, "Copied ${selectedFiles.size} items", Toast.LENGTH_SHORT).show()
                     mode?.finish()
                     return true
                 }
                 R.id.action_cut -> {
-                    FileOperations.selectedFiles = selectedFiles
+                    FileOperations.selectedFiles = selectedFiles.toList()
                     FileOperations.operationType = OperationType.CUT
                     Toast.makeText(context, "Cut ${selectedFiles.size} items", Toast.LENGTH_SHORT).show()
                     mode?.finish()
@@ -191,4 +191,3 @@ class FilesFragment : Fragment() {
         }
     }
 }
-

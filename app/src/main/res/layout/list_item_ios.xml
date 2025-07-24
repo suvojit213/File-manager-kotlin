@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
+
+    <ImageView
+        android:id="@+id/iv_file_icon_ios"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_file" />
+
+    <TextView
+        android:id="@+id/tv_file_name_ios"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/iv_file_icon_ios"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/ios_text_color"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="File Name" />
+
+    <TextView
+        android:id="@+id/tv_file_details_ios"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_file_name_ios"
+        android:layout_toEndOf="@id/iv_file_icon_ios"
+        android:textColor="@color/ios_secondary_text_color"
+        android:textSize="13sp"
+        android:text="Date, Size" />
+
+    <ImageView
+        android:id="@+id/iv_arrow_ios"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_arrow_right" />
+
+</RelativeLayout>

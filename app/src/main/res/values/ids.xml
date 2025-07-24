@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="storageFragment" type="id" />
+    <item name="filesFragment" type="id" />
+    <item name="recentsFragment" type="id" />
+</resources>

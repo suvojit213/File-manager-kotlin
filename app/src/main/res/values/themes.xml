@@ -33,12 +33,11 @@
         <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
         <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
-        
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">true</item> <!-- Light status bar icons for light theme -->
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/md_theme_light_background</item>
         <item name="android:textColorPrimary">@color/black</item>
@@ -62,10 +61,6 @@
         <item name="textAppearanceLabelSmall">@style/TextAppearance.FileManagerApp.LabelSmall</item>
     </style>
 
-    <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemTextColor">@color/black</item>
-    </style>
-
     <!-- Typography Styles -->
     <style name="TextAppearance.FileManagerApp.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge" />
     <style name="TextAppearance.FileManagerApp.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium" />
@@ -79,8 +74,6 @@
         <item name="android:ellipsize">end</item>
         <item name="android:scrollHorizontally">true</item>
         <item name="android:maxLines">1</item>
-        <item name="android:textColor">@color/black</item>
-        
     </style>
     <style name="TextAppearance.FileManagerApp.TitleMedium" parent="TextAppearance.Material3.TitleMedium" />
     <style name="TextAppearance.FileManagerApp.TitleSmall" parent="TextAppearance.Material3.TitleSmall" />
@@ -90,4 +83,8 @@
     <style name="TextAppearance.FileManagerApp.LabelLarge" parent="TextAppearance.Material3.LabelLarge" />
     <style name="TextAppearance.FileManagerApp.LabelMedium" parent="TextAppearance.Material3.LabelMedium" />
     <style name="TextAppearance.FileManagerApp.LabelSmall" parent="TextAppearance.Material3.LabelSmall" />
+
+    <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemTextColor">@color/black</item>
+    </style>
 </resources>

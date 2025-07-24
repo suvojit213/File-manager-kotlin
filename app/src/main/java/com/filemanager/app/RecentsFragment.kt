@@ -27,11 +27,11 @@ class RecentsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         
         fileAdapter = FileAdapter(
-            onItemClick = { fileItem ->
+            onClick = { fileItem ->
                 // Handle file click (e.g., open file)
                 Toast.makeText(context, "Clicked: ${fileItem.name}", Toast.LENGTH_SHORT).show()
             },
-            onItemLongClick = { fileItem ->
+            onLongClick = { fileItem ->
                 // No long click action for recents
             },
             onSelectionChange = { count ->
@@ -58,4 +58,3 @@ class RecentsFragment : Fragment() {
         }
     }
 }
-

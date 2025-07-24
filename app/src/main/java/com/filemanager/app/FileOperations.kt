@@ -10,7 +10,7 @@ enum class OperationType { COPY, CUT }
 
 object FileOperations {
 
-    var selectedFiles: Set<FileItem> = emptySet()
+    var selectedFiles: List<FileItem> = emptyList()
     var operationType: OperationType? = null
 
     suspend fun copyFiles(context: Context, destinationDir: File, onComplete: () -> Unit) {
@@ -84,7 +84,7 @@ object FileOperations {
     }
 
     fun clearOperations() {
-        selectedFiles = emptySet()
+        selectedFiles = emptyList()
         operationType = null
     }
 }
