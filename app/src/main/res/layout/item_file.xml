@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:text="Folder Name"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorOnSurface" />
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/fileDetails"
