@@ -21,8 +21,16 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
+    - name: Decode Keystore
+      run: echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > app/my-release-key.jks
+
     - name: Build with Gradle
-      run: gradle build
+      run: ./gradlew assembleRelease
+      env:
+        KEYSTORE_PATH: app/my-release-key.jks
+        KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
     - name: Extract version name
       id: version
@@ -42,5 +50,5 @@ jobs:
           Automated release for version ${{ env.VERSION_NAME }}
         draft: false
         prerelease: false
-        files: app/build/outputs/apk/release/app-release-unsigned.apk
+        files: app/build/outputs/apk/release/app-release.apk
         overwrite: true
