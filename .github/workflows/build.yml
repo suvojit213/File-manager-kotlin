@@ -21,6 +21,9 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
+    - name: List Gradle Wrapper files
+      run: ls -l gradle/wrapper/
+
     - name: Decode Keystore
       run: echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > app/my-release-key.jks
 
