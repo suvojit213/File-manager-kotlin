@@ -4,27 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/window_background"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <!-- Toolbar -->
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/white"
-                app:title="@string/files"
-                app:titleTextColor="@color/black" />
-
-        </com.google.android.material.appbar.AppBarLayout>
 
         <!-- Search Bar -->
         <LinearLayout
@@ -50,22 +36,10 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:hint="@string/search"
-                android:textColorHint="@color/dark_gray"
+                android:textColorHint="@color/secondary_text"
                 android:textSize="16sp" />
 
         </LinearLayout>
-
-        <!-- Storage Chip -->
-        <com.google.android.material.chip.Chip
-            android:id="@+id/storageChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/internal"
-            app:chipBackgroundColor="@color/light_gray"
-            app:chipStrokeColor="@color/dark_gray"
-            app:chipStrokeWidth="1dp" />
 
         <!-- Main Content -->
         <FrameLayout
@@ -79,7 +53,7 @@
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/bottom_nav_background"
             app:menu="@menu/bottom_navigation_menu" />
 
     </LinearLayout>
@@ -92,9 +66,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/blue"
-        app:tint="@color/white"
+        app:backgroundTint="@color/fab_background"
+        app:tint="@color/icons"
         android:contentDescription="@string/create_new" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,13 +33,15 @@ class FileAdapter(
         
         holder.fileName.text = fileItem.name
         
-        // Set icon based on file type
+        // Set icon and background based on file type
         if (fileItem.isDirectory) {
             holder.fileIcon.setImageResource(R.drawable.ic_folder)
             holder.arrowIcon.visibility = View.VISIBLE
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.item_folder_background))
         } else {
             holder.fileIcon.setImageResource(getFileIcon(fileItem.name))
             holder.arrowIcon.visibility = View.GONE
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.item_file_background))
         }
         
         // Format date and details
@@ -87,4 +90,3 @@ class FileAdapter(
         }
     }
 }
-
