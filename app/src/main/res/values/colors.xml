@@ -76,4 +76,5 @@
     <color name="fab_background">#2196F3</color>
     <color name="icons">#000000</color>
     <color name="item_file_background">#FFFFFF</color>
+    <color name="item_folder_background">#F5F5F5</color>
 </resources>

@@ -102,19 +102,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         searchView.setupWithSearchBar(searchBar)
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // Handle search query submission
-                Toast.makeText(this@MainActivity, "Search submitted: $query", Toast.LENGTH_SHORT).show()
-                searchView.hide()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // Handle text changes in search view
-                return false
-            }
-        })
+        searchView.editText.setOnEditorActionListener { v, actionId, event ->
+            Toast.makeText(this@MainActivity, "Search submitted: " + searchView.text, Toast.LENGTH_SHORT).show()
+            searchView.hide()
+            false
+        }
     }
 
     private fun loadFragment(fragment: Fragment) {
