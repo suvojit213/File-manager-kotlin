@@ -24,7 +24,7 @@ jobs:
     - name: Make gradlew executable and ensure wrapper is present
       run: |
         chmod +x gradlew
-        ./gradlew wrapper --gradle-version 8.9
+        ./gradlew wrapper --gradle-version 8.14.3
 
     - name: Decode Keystore
       run: echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > app/my-release-key.jks
