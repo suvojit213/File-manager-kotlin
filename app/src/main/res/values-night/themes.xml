@@ -62,6 +62,14 @@
     </style>
 
     <!-- Typography Styles (defined in values/themes.xml, but referenced here for consistency) -->
+    <style name="TextAppearance.FileManagerApp.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">18sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
     <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemTextColor">@color/black</item>
     </style>
