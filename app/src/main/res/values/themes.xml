@@ -61,7 +61,7 @@
         <item name="textAppearanceLabelSmall">@style/TextAppearance.FileManagerApp.LabelSmall</item>
     </style>
 
-    <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView.PrimarySurface">
+    <style name="Widget.FileManagerApp.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemTextColor">@color/md_theme_light_onSurface</item>
     </style>
 
