@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
@@ -14,7 +15,7 @@ class FilesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var fileAdapter: FileAdapter
-    private var currentPath: String = Environment.getExternalStorageDirectory().absolutePath
+    internal lateinit var filesViewModel: FilesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,71 +27,45 @@ class FilesFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
         
-        fileAdapter = FileAdapter(emptyList()) { fileItem ->
+        fileAdapter = FileAdapter { fileItem ->
             if (fileItem.isDirectory) {
                 navigateToFolder(fileItem.path)
             }
         }
         
         recyclerView.adapter = fileAdapter
+
+        filesViewModel = ViewModelProvider(this).get(FilesViewModel::class.java)
+
+        filesViewModel.files.observe(viewLifecycleOwner) {
+            fileAdapter.submitList(it)
+        }
+
+        filesViewModel.currentPath.observe(viewLifecycleOwner) {
+            (activity as? MainActivity)?.updateCurrentPath(it)
+        }
         
-        loadFiles()
+        filesViewModel.loadFiles(Environment.getExternalStorageDirectory().absolutePath)
         
         return view
     }
 
-    private fun loadFiles() {
-        val directory = File(currentPath)
-        val files = mutableListOf<FileItem>()
-        
-        try {
-            directory.listFiles()?.forEach { file ->
-                val itemCount = if (file.isDirectory) {
-                    file.listFiles()?.size ?: 0
-                } else 0
-                
-                files.add(
-                    FileItem(
-                        name = file.name,
-                        path = file.absolutePath,
-                        isDirectory = file.isDirectory,
-                        lastModified = file.lastModified(),
-                        size = if (file.isFile) file.length() else 0L,
-                        itemCount = itemCount
-                    )
-                )
-            }
-        } catch (e: SecurityException) {
-            // Handle permission denied
-        }
-        
-        // Sort: directories first, then files, both alphabetically
-        val sortedFiles = files.sortedWith(compareBy<FileItem> { !it.isDirectory }.thenBy { it.name.lowercase() })
-        
-        fileAdapter.updateFiles(sortedFiles)
-    }
-
     private fun navigateToFolder(path: String) {
-        currentPath = path
-        loadFiles()
-        
-        // Update activity title or breadcrumb
-        (activity as? MainActivity)?.updateCurrentPath(path)
+        filesViewModel.loadFiles(path)
     }
 
     fun navigateUp(): Boolean {
+        val currentPath = filesViewModel.currentPath.value ?: return false
         val parentFile = File(currentPath).parentFile
         return if (parentFile != null && parentFile.canRead()) {
-            currentPath = parentFile.absolutePath
-            loadFiles()
-            (activity as? MainActivity)?.updateCurrentPath(currentPath)
+            filesViewModel.loadFiles(parentFile.absolutePath)
             true
         } else {
             false
         }
     }
 
-    fun getCurrentPath(): String = currentPath
+    fun getCurrentPath(): String = filesViewModel.currentPath.value ?: Environment.getExternalStorageDirectory().absolutePath
 
     companion object {
         fun newInstance(): FilesFragment {

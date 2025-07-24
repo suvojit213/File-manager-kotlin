@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
 
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+
 class FileAdapter(
-    private var fileList: List<FileItem>,
     private val onItemClick: (FileItem) -> Unit
-) : RecyclerView.Adapter<FileAdapter.FileViewHolder>() {
+) : ListAdapter<FileItem, FileAdapter.FileViewHolder>(FileDiffCallback()) {
 
     class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val fileIcon: ImageView = itemView.findViewById(R.id.fileIcon)
@@ -29,7 +31,7 @@ class FileAdapter(
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
-        val fileItem = fileList[position]
+        val fileItem = getItem(position)
         
         holder.fileName.text = fileItem.name
         
@@ -61,13 +63,6 @@ class FileAdapter(
         }
     }
 
-    override fun getItemCount(): Int = fileList.size
-
-    fun updateFiles(newFileList: List<FileItem>) {
-        fileList = newFileList
-        notifyDataSetChanged()
-    }
-
     private fun getFileIcon(fileName: String): Int {
         return when (fileName.substringAfterLast('.', "").lowercase()) {
             "jpg", "jpeg", "png", "gif", "bmp" -> R.drawable.ic_file
@@ -88,5 +83,15 @@ class FileAdapter(
             size >= 1024 -> String.format("%.1f kB", size / 1024.0)
             else -> "$size B"
         }
+    }
+}
+
+class FileDiffCallback : DiffUtil.ItemCallback<FileItem>() {
+    override fun areItemsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
+        return oldItem.path == newItem.path
+    }
+
+    override fun areContentsTheSame(oldItem: FileItem, newItem: FileItem): Boolean {
+        return oldItem == newItem
     }
 }

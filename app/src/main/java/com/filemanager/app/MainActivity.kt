@@ -101,21 +101,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun getFilesFragment(): FilesFragment {
         if (filesFragment == null) {
-            filesFragment = FilesFragment.newInstance()
+            filesFragment = FilesFragment()
         }
         return filesFragment!!
     }
 
     private fun getStorageFragment(): StorageFragment {
         if (storageFragment == null) {
-            storageFragment = StorageFragment.newInstance()
+            storageFragment = StorageFragment()
         }
         return storageFragment!!
     }
 
     private fun getRecentsFragment(): RecentsFragment {
         if (recentsFragment == null) {
-            recentsFragment = RecentsFragment.newInstance()
+            recentsFragment = RecentsFragment()
         }
         return recentsFragment!!
     }
@@ -147,12 +147,7 @@ class MainActivity : AppCompatActivity() {
             }
             
             // Refresh the files list
-            filesFragment?.let { fragment ->
-                // Reload files in the fragment
-                val method = fragment.javaClass.getDeclaredMethod("loadFiles")
-                method.isAccessible = true
-                method.invoke(fragment)
-            }
+            filesFragment?.filesViewModel?.loadFiles(currentPath)
             
         } catch (e: Exception) {
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
