@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 enum class SortType {
@@ -25,12 +26,11 @@ class FilesViewModel : ViewModel() {
 
     fun loadFiles(path: String) {
         _currentPath.value = path
-        viewModelScope.launch(Dispatchers.IO) {
-            val directory = File(path)
-            val fileList = mutableListOf<FileItem>()
-
-            try {
-                directory.listFiles()?.forEach { file ->
+        viewModelScope.launch {
+            val fileList = withContext(Dispatchers.IO) {
+                val directory = File(path)
+                val files = directory.listFiles()
+                files?.map { file ->
                     val itemCount = if (file.isDirectory) {
                         file.listFiles()?.size ?: 0
                     } else 0
@@ -49,18 +49,14 @@ class FilesViewModel : ViewModel() {
                         else -> R.drawable.ic_file
                     }
 
-                    fileList.add(
-                        FileItem(
-                            file = file,
-                            name = file.name,
-                            details = details,
-                            isDirectory = file.isDirectory,
-                            icon = iconResId
-                        )
+                    FileItem(
+                        file = file,
+                        name = file.name,
+                        details = details,
+                        isDirectory = file.isDirectory,
+                        icon = iconResId
                     )
-                }
-            } catch (e: SecurityException) {
-                // Handle permission denied
+                } ?: emptyList()
             }
 
             // Sort: directories first, then files, both alphabetically

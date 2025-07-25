@@ -18,8 +18,12 @@ import android.view.ActionMode
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import com.filemanager.app.databinding.FragmentFilesBinding
 
 class FilesFragment : Fragment() {
+
+    private var _binding: FragmentFilesBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var fileAdapter: FileAdapter
@@ -41,9 +45,10 @@ class FilesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_files, container, false)
+        _binding = FragmentFilesBinding.inflate(inflater, container, false)
+        val view = binding.root
         
-        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView = binding.recyclerView
         
         layoutManagerList = LinearLayoutManager(context)
         layoutManagerGrid = GridLayoutManager(context, 3)
@@ -278,6 +283,11 @@ class FilesFragment : Fragment() {
             fileAdapter.notifyDataSetChanged() // Poori list ko refresh karein
             actionMode = null
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

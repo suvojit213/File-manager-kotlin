@@ -1,6 +1,5 @@
 package com.filemanager.app
 
-import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +20,9 @@ class FileAdapter(
 ) :
     ListAdapter<FileItem, FileAdapter.FileViewHolder>(FileDiffCallback()) {
 
-    private val selectedItems = SparseBooleanArray()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
         val binding = ListItemIosBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FileViewHolder(binding, onClick, onLongClick, selectedItems, onSelectionChange)
+        return FileViewHolder(binding, onClick, onLongClick, onSelectionChange)
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
@@ -52,38 +49,29 @@ class FileAdapter(
         // --- SELECTION LOGIC END ---
     }
 
-    fun toggleSelection(position: Int) {
-        if (selectedItems.get(position, false)) {
-            selectedItems.delete(position)
-        } else {
-            selectedItems.put(position, true)
+    fun toggleSelection(fileItem: FileItem) {
+        fileItem.isSelected = !fileItem.isSelected
+        val updatedList = currentList.toMutableList()
+        submitList(updatedList) {
+            onSelectionChange(updatedList.count { it.isSelected })
         }
-        notifyItemChanged(position)
-        onSelectionChange(selectedItems.size())
     }
 
     fun getSelectedItems(): List<FileItem> {
-        val items = mutableListOf<FileItem>()
-        for (i in 0 until selectedItems.size()) {
-            if (selectedItems.valueAt(i)) {
-                items.add(getItem(selectedItems.keyAt(i)))
-            }
-        }
-        return items
+        return currentList.filter { it.isSelected }
     }
 
     fun clearSelection() {
-        val selection = selectedItems.size()
-        selectedItems.clear()
-        notifyDataSetChanged()
-        onSelectionChange(0)
+        val updatedList = currentList.map { it.copy(isSelected = false) }
+        submitList(updatedList) {
+            onSelectionChange(0)
+        }
     }
 
     class FileViewHolder(
         private val binding: ListItemIosBinding,
         private val onClick: (FileItem) -> Unit,
         private val onLongClick: (FileItem) -> Unit,
-        private val selectedItems: SparseBooleanArray,
         private val onSelectionChange: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -91,18 +79,20 @@ class FileAdapter(
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    if (selectedItems.size() > 0) {
-                        (bindingAdapter as? FileAdapter)?.toggleSelection(position)
+                    val fileItem = (bindingAdapter as FileAdapter).getItem(position)
+                    if ((bindingAdapter as FileAdapter).getSelectedItems().isNotEmpty()) {
+                        (bindingAdapter as FileAdapter).toggleSelection(fileItem)
                     } else {
-                        onClick(getItem(position))
+                        onClick(fileItem)
                     }
                 }
             }
             itemView.setOnLongClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    (bindingAdapter as? FileAdapter)?.toggleSelection(position)
-                    onLongClick(getItem(position))
+                    val fileItem = (bindingAdapter as FileAdapter).getItem(position)
+                    (bindingAdapter as FileAdapter).toggleSelection(fileItem)
+                    onLongClick(fileItem)
                 }
                 true
             }
