@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.content.ContextCompat
 
+import com.bumptech.glide.Glide
+
 class FileAdapter(
     private val onClick: (FileItem) -> Unit,
     private val onLongClick: (FileItem) -> Unit,
@@ -119,14 +121,28 @@ class FileAdapter(
             details.append(formatDate(fileItem.file.lastModified()))
             binding.tvFileDetailsIos.text = details.toString()
 
-            val iconResId = when {
-                fileItem.isDirectory -> R.drawable.ic_folder_ios
-                fileItem.name.endsWith(".pdf", true) -> R.drawable.ic_pdf_file
-                fileItem.name.endsWith(".mp4", true) || fileItem.name.endsWith(".avi", true) -> R.drawable.ic_video_file
-                fileItem.name.endsWith(".apk", true) -> R.drawable.ic_apk_file
-                else -> R.drawable.ic_file
+            // Load thumbnail for images and videos, otherwise set generic icon
+            if (fileItem.file.isFile) {
+                val extension = fileItem.file.extension.lowercase(Locale.getDefault())
+                if (extension in listOf("jpg", "jpeg", "png", "gif", "bmp", "webp", "mp4", "avi", "mkv", "mov")) {
+                    Glide.with(binding.ivFileIconIos.context)
+                        .load(fileItem.file)
+                        .placeholder(R.drawable.ic_file) // Placeholder while loading
+                        .error(R.drawable.ic_file) // Error placeholder
+                        .centerCrop()
+                        .into(binding.ivFileIconIos)
+                } else {
+                    val iconResId = when {
+                        fileItem.name.endsWith(".pdf", true) -> R.drawable.ic_pdf_file
+                        fileItem.name.endsWith(".apk", true) -> R.drawable.ic_apk_file
+                        else -> R.drawable.ic_file
+                    }
+                    binding.ivFileIconIos.setImageResource(iconResId)
+                }
+            } else {
+                binding.ivFileIconIos.setImageResource(R.drawable.ic_folder)
             }
-            binding.ivFileIconIos.setImageResource(iconResId)
+
             binding.ivArrowIos.visibility = if (fileItem.isDirectory) View.VISIBLE else View.GONE
         }
 

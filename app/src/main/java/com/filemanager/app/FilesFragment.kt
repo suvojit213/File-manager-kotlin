@@ -66,7 +66,11 @@ class FilesFragment : Fragment() {
         filesViewModel = ViewModelProvider(this).get(FilesViewModel::class.java)
 
         filesViewModel.files.observe(viewLifecycleOwner) {
-            fileAdapter.submitList(it)
+            recyclerView.alpha = 0f // Make it invisible initially
+            fileAdapter.submitList(it) {
+                // Animation after list is submitted and laid out
+                recyclerView.animate().alpha(1f).setDuration(300).start()
+            }
         }
 
         filesViewModel.currentPath.observe(viewLifecycleOwner) {
@@ -80,6 +84,20 @@ class FilesFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.files_menu, menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
+
+        searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filesViewModel.searchFiles(query ?: "")
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filesViewModel.searchFiles(newText ?: "")
+                return true
+            }
+        })
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -87,6 +105,25 @@ class FilesFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_toggle_layout -> {
                 toggleLayout()
+                true
+            }
+            R.id.action_search -> {
+                true
+            }
+            R.id.sort_by_name -> {
+                filesViewModel.sortFiles(SortType.NAME)
+                true
+            }
+            R.id.sort_by_date -> {
+                filesViewModel.sortFiles(SortType.DATE)
+                true
+            }
+            R.id.sort_by_size -> {
+                filesViewModel.sortFiles(SortType.SIZE)
+                true
+            }
+            R.id.sort_by_type -> {
+                filesViewModel.sortFiles(SortType.TYPE)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -198,10 +235,36 @@ class FilesFragment : Fragment() {
                     }
                     return true
                 }
-                R.id.action_paste -> {
-                    // This should ideally be handled by a separate paste button, not in action mode
-                    // For now, we'll just show a toast if somehow triggered here
-                    Toast.makeText(context, "Paste action not available here", Toast.LENGTH_SHORT).show()
+                R.id.action_paste -> {                    // This should ideally be handled by a separate paste button, not in action mode                    // For now, we'll just show a toast if somehow triggered here                    Toast.makeText(context, "Paste action not available here", Toast.LENGTH_SHORT).show()                    return true                }                R.id.action_properties -> {
+                    if (selectedFiles.isNotEmpty()) {
+                        FilePropertiesDialog.newInstance(selectedFiles.first()).show(parentFragmentManager, "FilePropertiesDialog")
+                    }
+                    mode?.finish()
+                    return true
+                }
+                R.id.action_compress -> {
+                    lifecycleScope.launch {
+                        val destinationZipFile = File(currentPath, "archive.zip")
+                        FileOperations.zipFiles(requireContext(), destinationZipFile, onComplete = {
+                            filesViewModel.loadFiles(currentPath)
+                            mode?.finish()
+                        })
+                    }
+                    return true
+                }
+                R.id.action_extract -> {
+                    if (selectedFiles.size == 1 && selectedFiles.first().name.endsWith(".zip", true)) {
+                        lifecycleScope.launch {
+                            val zipFile = selectedFiles.first().file
+                            val destinationDir = File(currentPath)
+                            FileOperations.unzipFile(requireContext(), zipFile, destinationDir, onComplete = {
+                                filesViewModel.loadFiles(currentPath)
+                                mode?.finish()
+                            })
+                        }
+                    } else {
+                        Toast.makeText(context, "Please select a single .zip file to extract.", Toast.LENGTH_SHORT).show()
+                    }
                     return true
                 }
                 else -> false

@@ -9,5 +9,5 @@ data class FileItem(
     val isDirectory: Boolean,
     val icon: Int,
     var isSelected: Boolean = false
-)
+) : java.io.Serializable
 

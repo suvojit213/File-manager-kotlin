@@ -20,4 +20,19 @@
         android:title="Delete"
         android:icon="@drawable/ic_delete"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_properties"
+        android:title="Properties"
+        android:icon="@drawable/ic_info"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_compress"
+        android:title="Compress"
+        android:icon="@drawable/ic_compress"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_extract"
+        android:title="Extract"
+        android:icon="@drawable/ic_extract"
+        app:showAsAction="ifRoom" />
 </menu>
